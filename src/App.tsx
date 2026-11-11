@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ExternalLink, LoaderCircle, MapPin, Phone, Search } from "lucide-react";
 import { CategoryDropdown } from "./components/CategoryDropdown";
+import { apiUrl } from "./api";
 import type { ApiErrorResponse, PlaceResult, SearchCategory, SearchPage } from "./types";
 
 type SearchStatus = "idle" | "loading" | "success" | "error";
@@ -86,7 +87,7 @@ export default function App() {
     void (async () => {
       setCategoriesLoading(true);
       try {
-        const response = await fetch("/api/categories", { signal: controller.signal });
+        const response = await fetch(apiUrl("/api/categories"), { signal: controller.signal });
         const payload = await readJson<{ categories: SearchCategory[] }>(response);
         setCategories(payload.categories);
         setCategoriesError(null);
@@ -121,7 +122,7 @@ export default function App() {
     setSearchError(null);
 
     try {
-      const response = await fetch("/api/search/next", {
+      const response = await fetch(apiUrl("/api/search/next"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cursor }),
@@ -207,7 +208,7 @@ export default function App() {
     setSearchStatus("loading");
 
     try {
-      const response = await fetch("/api/search", {
+      const response = await fetch(apiUrl("/api/search"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ categories: selectedIds }),
